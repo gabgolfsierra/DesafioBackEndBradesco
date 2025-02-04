@@ -1,9 +1,8 @@
-package com.bradesco.DesafioBackEnd.Entidades;
+package com.bradesco.DesafioBackEnd.Entities;
 
 import com.bradesco.DesafioBackEnd.Enums.UserTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.usertype.UserType;
 
 import java.util.Date;
 
