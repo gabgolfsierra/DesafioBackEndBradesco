@@ -8,16 +8,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Usuários", description = "Endpoints para gerenciar o CRUD de usuários")
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -26,12 +29,17 @@ public class UserController {
         this.userService = userService;
     }
 
+
+
     @PostMapping
     @Operation(summary = "Criar um novo usuário", description = "Salva um novo usuário no banco de dados.")
+    @Validated
     public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserDTO userDTO) {
         UserEntity createdUser = userService.createUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
+
+
 
     @GetMapping
     @Operation(summary = "Listar todos os usuários", description = "Retorna uma lista de usuários cadastrados.")
@@ -43,6 +51,8 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+
+
     @GetMapping("/{id}")
     @Operation(summary = "Buscar usuário por ID", description = "Retorna um usuário específico pelo ID informado.")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Long id) {
@@ -51,8 +61,11 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com ID " + id + " não encontrado"));
     }
 
+
+
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar usuário", description = "Atualiza os dados de um usuário pelo ID.")
+    @Validated
     public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
         try {
             UserEntity updatedUser = userService.updateUser(id, userDTO);
@@ -66,15 +79,23 @@ public class UserController {
         }
     }
 
+
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir usuário", description = "Remove um usuário pelo ID.")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+
         if (userService.getUserById(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Usuário com ID " + id + " não encontrado"));
         }
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Usuário com ID " + id + " foi deletado com sucesso"));
     }
+
+
+
+
 
     // Tratamento global de erros de validação
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
@@ -87,6 +108,6 @@ public class UserController {
     // Tratamento de erro para requisições inválidas
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, String>> handleResponseStatusException(ResponseStatusException ex) {
-        return ResponseEntity.status(ex.getStatusCode()).body(Map.of("error", ex.getReason()));
+        return ResponseEntity.status(ex.getStatusCode()).body(Map.of("error", Objects.requireNonNull(ex.getReason())));
     }
 }
