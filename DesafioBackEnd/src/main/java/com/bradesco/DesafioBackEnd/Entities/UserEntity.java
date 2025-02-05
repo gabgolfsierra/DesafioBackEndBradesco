@@ -15,6 +15,8 @@ import java.util.Date;
 @ToString
 public class UserEntity {
 
+    /* Poderia utilizar @Column nos atributos, porém o banco utilizado H2 já mapeia esses atributos da Entidade no banco */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private Long id;

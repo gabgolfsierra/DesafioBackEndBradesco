@@ -24,7 +24,6 @@ public class UserService {
         return saveUser(userDTO, null);
     }
 
-
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
@@ -49,21 +48,48 @@ public class UserService {
     }
 
     private UserEntity saveUser(UserDTO userDTO, Long id) {
-        UserEntity user = id == null ? new UserEntity() : userRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com ID " + id + " não encontrado")
-        );
 
-        user.setFullName(userDTO.getFullName());
-        user.setEmail(userDTO.getEmail());
-        user.setPhone(userDTO.getPhone());
-        user.setBirthDate(userDTO.getBirthDate());
+        //Tratamento de dados
 
-        // Validação para userTypeEnum
+        // Verifica se o usuário existe ao atualizar
+        UserEntity user = id == null ? new UserEntity() : userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com ID " + id + " não encontrado"));
+
+        // Validações manuais para garantir mensagens no Postman
+        if (userDTO.getFullName() == null || userDTO.getFullName().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insira o Nome Completo, por favor.");
+        }
+        if (userDTO.getEmail() == null || userDTO.getEmail().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insira o Email, por favor.");
+        } else if (!userDTO.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Formato de Email inválido!");
+        }
+
+        if (userDTO.getPhone() == null || userDTO.getPhone().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insira o número de telefone, por favor.");
+        } else if (!userDTO.getPhone().matches("\\+\\d{1,3}\\s\\d{2}\\s\\d{4,5}-\\d{4}")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Número de telefone deve ser no formato: +CC XX XXXXX-XXXX");
+        }
+
+        if (userDTO.getBirthDate() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insira a data de nascimento, por favor.");
+        }
+
+        if (userDTO.getUserType() == null || userDTO.getUserType().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de usuário deve ser: ADMIN, EDITOR, VIEWER");
+        }
+
         try {
             user.setUserType(UserTypeEnum.valueOf(userDTO.getUserType().toUpperCase()));
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de usuário inválido. Deve ser: ADMIN, EDITOR ou VIEWER.");
         }
+
+
+        user.setFullName(userDTO.getFullName());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+        user.setBirthDate(userDTO.getBirthDate());
 
         return userRepository.save(user);
     }

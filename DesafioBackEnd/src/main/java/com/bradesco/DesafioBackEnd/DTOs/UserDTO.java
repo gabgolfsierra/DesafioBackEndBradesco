@@ -13,29 +13,26 @@ import java.util.Date;
 @ToString
 public class UserDTO {
 
+    //Anotações tratam dados de entrda
 
-    @NotBlank(message = "Insira o Nome Completo, por favor.")
+    @NotBlank
     @NotNull
     private String fullName;
 
-    @NotBlank(message = "Insira o Email, por favor.")
+    @NotBlank
     @NotNull
-    @Email(message = "Formato de Email inválido!")
+    @Email
     private String email;
 
-    @NotBlank(message = "Insira o número de telefone, por favor.")
+    @NotBlank
     @NotNull
-    @Pattern(
-            regexp = "\\+\\d{1,3}\\s\\d{2}\\s\\d{4,5}-\\d{4}",
-            message = "Número de telefone deve ser no formato: +CC XX XXXXX-XXXX"
-    )
     private String phone;
 
-    @NotNull(message = "Insira a data de aniversário, por favor.")
+    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date birthDate;
 
-    @NotBlank(message = "Tipo de usuário deve ser: ADMIN, EDITOR, VIEWER")
+    @NotBlank
     @NotNull
     private String userType;
 }

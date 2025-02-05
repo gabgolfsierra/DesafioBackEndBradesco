@@ -30,7 +30,6 @@ public class UserController {
     }
 
 
-
     @PostMapping
     @Operation(summary = "Criar um novo usuário", description = "Salva um novo usuário no banco de dados.")
     @Validated
@@ -94,20 +93,4 @@ public class UserController {
     }
 
 
-
-
-
-    // Tratamento global de erros de validação
-    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(jakarta.validation.ConstraintViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation -> errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-    }
-
-    // Tratamento de erro para requisições inválidas
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Map<String, String>> handleResponseStatusException(ResponseStatusException ex) {
-        return ResponseEntity.status(ex.getStatusCode()).body(Map.of("error", Objects.requireNonNull(ex.getReason())));
-    }
 }
