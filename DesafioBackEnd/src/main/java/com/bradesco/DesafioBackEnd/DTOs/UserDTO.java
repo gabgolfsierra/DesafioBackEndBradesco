@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -35,4 +36,6 @@ public class UserDTO {
     @NotBlank
     @NotNull
     private String userType;
+
+
 }

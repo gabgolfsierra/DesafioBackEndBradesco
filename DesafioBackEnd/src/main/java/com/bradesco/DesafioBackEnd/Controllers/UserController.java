@@ -12,10 +12,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,7 +24,6 @@ import java.util.Objects;
 public class UserController {
 
     private final UserService userService;
-
     public UserController(UserService userService) {
         this.userService = userService;
     }

@@ -51,14 +51,15 @@ public class UserService {
 
         //Tratamento de dados
 
-        // Verifica se o usuário existe ao atualizar
+        // Verifica se o usuário existe ao atualizar ou criar
         UserEntity user = id == null ? new UserEntity() : userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com ID " + id + " não encontrado"));
 
-        // Validações manuais para garantir mensagens no Postman
+        // Validações manuais para garantir mensagens no Postman ou swagger
         if (userDTO.getFullName() == null || userDTO.getFullName().trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insira o Nome Completo, por favor.");
         }
+
         if (userDTO.getEmail() == null || userDTO.getEmail().trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insira o Email, por favor.");
         } else if (!userDTO.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
